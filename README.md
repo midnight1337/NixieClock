@@ -1,2 +1,2 @@
 # Nixie_clock
-Good looking clock based on Nixie tubes and Arduino pro mini
+Very well looking, retro clock, based on Nixie tubes and Arduino pro mini.
