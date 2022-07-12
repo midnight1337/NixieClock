@@ -1,6 +1,8 @@
 /*
-    17.07.2021
-    Code made for NIXIE CLOCK by midnight1337
+    Title: Nixie Clock
+    Author: Kamil Koltowski
+    Date: 17.07.2021
+    Description: Nixie clock program
 */
 #include <DS3231.h>
 #include <Wire.h>
