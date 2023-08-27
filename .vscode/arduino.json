@@ -1,0 +1,6 @@
+{
+    "configuration": "cpu=atmega168",
+    "board": "arduino:avr:nano",
+    "port": "COM8",
+    "sketch": "nixie-tube-sn74141n-test.ino"
+}

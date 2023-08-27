@@ -1,8 +1,6 @@
 /*
-    Title: Nixie Clock
-    Author: Kamil Koltowski
-    Date: 17.07.2021
-    Description: Nixie clock program
+    17.07.2021
+    Code made for NIXIE CLOCK by midnight1337
 */
 #include <DS3231.h>
 #include <Wire.h>
@@ -135,7 +133,7 @@ void SetLogicStates(uint8_t timeValue)
       m_SN74141N_Input_Logic_States[1] = 0;
       m_SN74141N_Input_Logic_States[0] = 0;
       break;
-    case 0x01:  // 1 => 9  (decimal 1 |0001| is written as 9 |1001| on SN74141N input, but it still shows 1 ON Tube due to reversed Nixie Tube pinout order on PCB)
+    case 0x01:  // 1 => 9  (decimal 1 |0001| is written as 9 |1001| on SN74141N input, but it still shows 1 due to reversed Nixie Tube pinout order on PCB)
       m_SN74141N_Input_Logic_States[3] = 1; // Input Pin D, MSB ??
       m_SN74141N_Input_Logic_States[2] = 0;
       m_SN74141N_Input_Logic_States[1] = 0;
