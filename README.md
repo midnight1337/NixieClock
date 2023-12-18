@@ -1,11 +1,17 @@
-# Nixie Tube Clock
-Very cool retro style clock, based on nixie tubes taken from old multimeter and Arduino pro mini. <br />
-Code is written in procedural paradigm, OOP version coming soon.
+# Nixie Clock
 
-# Features
-Clock is able to show time in hours and minutes, <br />
-Clock has RTC module so it can remember time without power supply, <br />
-User is able to set time on each tube by pressing buttons, <br />
+## Overwiev
 
-# Photos
-Coming soon :)
+Retro style clock, is a project based on cool looking, vintage nixie tubes. <br />
+It displays time in Hour::Minute format. If Real Time Clock somehow lose his time, user is able to change it by himself with functional buttons. Best advantage of that project is that it looks cool af. <br />
+
+### Technologies and Developmen
+- Arduino Pro Mini
+- C++
+
+## Schematic
+...
+
+
+## Project documentation
+
