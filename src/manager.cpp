@@ -20,9 +20,43 @@ void Manager::run()
    m_rtc.read_time();
 }
 
+void Manager::setup()
+{
+    /*
+        Initialise pinout here??
+    */
+}
+
 void Manager::run_tubes_test_on_power_on()
 {
     /*
         Display number from 0-9 on every tube
     */
+}
+
+void Manager::tubes_blinking()
+{
+
+}
+
+void Manager::turn_on_tube(int id, bool all_tubes = false)
+{
+    if (all_tubes)
+    {
+        // ...
+        return;
+    }
+
+
+}
+
+void Manager::turn_off_tube(int id, bool all_tubes = false)
+{
+    if (all_tubes)
+    {
+        // ...
+        return;
+    }
+
+
 }
