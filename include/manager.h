@@ -1,5 +1,7 @@
+#include "Arduino.h"
 #include "nixie_driver.h"
 #include "rtc.h"
+#include "switch.h"
 #include "hardware_pinout.h"
 
 #ifndef MANAGER_H
@@ -13,11 +15,16 @@ class Manager
         NixieDriver m_driver_3;
         NixieDriver m_driver_4;
         Rtc m_rtc;
+        SwitchMenu m_switch_menu;
+        SwitchPrevious m_switch_previous;
+        SwitchNext m_switch_next;
+        
 
     public:
         Manager();
         void run();
         void setup();
+        void event();
 
         void run_tubes_test_on_power_on();
         void tubes_blinking();

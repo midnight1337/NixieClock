@@ -16,7 +16,7 @@ class DriverBase
     public:
         DriverBase(String label, int pin_a, int pin_b, int pin_c, int pin_d);
         void set_pinout_state(bool pin_a, bool pin_b, bool pin_c, bool pin_d);
-        virtual ~DriverBase() = default;
+        virtual ~DriverBase() = 0;
 };
 
 #endif
