@@ -1,26 +1,17 @@
-#include "switch_base.h"
+#include <Arduino.h>
+
+#ifndef SWITCH_H
+#define SWITCH_H
 
 
-
-class SwitchMenu : public SwitchBase
+class Switch
 {
-    public:
-        SwitchMenu(int pin);
-        virtual void function() override;
-};
-
-class SwitchNext : public SwitchBase
-{
+    protected:
+        int m_pin;
 
     public:
-        SwitchNext(int pin);
-        virtual void function() override;
+        Switch(int pin);
+        bool event();
 };
 
-class SwitchPrevious : public SwitchBase
-{
-
-    public:
-        SwitchPrevious(int pin);
-        virtual void function() override;
-};
+#endif

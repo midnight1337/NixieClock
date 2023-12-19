@@ -1,22 +1,9 @@
 #include "../include/switch.h"
 
-SwitchMenu::SwitchMenu(int pin) : SwitchBase(pin) {}
+Switch::Switch(int pin) : m_pin(pin) {}
 
-SwitchNext::SwitchNext(int pin) : SwitchBase(pin) {}
-
-SwitchPrevious::SwitchPrevious(int pin) : SwitchBase(pin) {}
-
-void SwitchMenu::function()
+bool Switch::event()
 {
-    // ...
-}
-
-void SwitchNext::function()
-{
-    // ...
-}
-
-void SwitchPrevious::function()
-{
-    // ...
+    bool is_event = digitalRead(m_pin) == true ? true : false;
+    return is_event;
 }

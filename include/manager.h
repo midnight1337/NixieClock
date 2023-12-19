@@ -10,16 +10,17 @@
 class Manager
 {
     private:
+        NixieDriver m_driver_0;
         NixieDriver m_driver_1;
         NixieDriver m_driver_2;
         NixieDriver m_driver_3;
-        NixieDriver m_driver_4;
+        NixieDriver* m_drivers[4] = { &m_driver_0, &m_driver_1, &m_driver_2, &m_driver_3 };
+        Switch m_switch_menu;
+        Switch m_switch_previous;
+        Switch m_switch_next;
         Rtc m_rtc;
-        SwitchMenu m_switch_menu;
-        SwitchPrevious m_switch_previous;
-        SwitchNext m_switch_next;
         
-
+        
     public:
         Manager();
         void run();

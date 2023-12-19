@@ -1,9 +1,8 @@
 /*
 Title: Nixie Clock
 Author: midnight1337
-Date: 2023 - 12 - 18
+Date: 18-12-2023
 */
-#include <Arduino.h>
 #include "manager.h"
 
 
@@ -17,5 +16,6 @@ int main()
   while (true)
   {
     manager.run();
+    delay(1000);
   }
 }
