@@ -1,9 +1,7 @@
 #include "../include/rtc.h"
 
 Rtc::Rtc()
-{
-
-}
+{}
 
 int** Rtc::time()
 {

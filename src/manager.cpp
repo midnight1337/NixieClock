@@ -48,7 +48,9 @@ void Manager::event()
         int start_timer = 0;
         int stop_timer = 0;
         int idle_time = 0;
-        NixieDriver* ptr_driver = *(m_drivers + driver_index);
+        uint8_t number = 0;
+        uint8_t bitset = 0b0000;
+        NixieDriver* ptr_current_driver = *(m_drivers + driver_index);
         // ... blink mode
 
         while (true)
@@ -58,13 +60,15 @@ void Manager::event()
             if (m_switch_next.event())
             {
                 // Verify if time format allows increment time digit
-                
+                bitset = ptr_current_driver->truth_table(number);
+                ptr_current_driver->set_pinout_state(bitset);
             }
 
             if (m_switch_previous.event())
             {
                 // Verify if time format allows decrement time digit
-                // Write on driver
+                bitset = ptr_current_driver->truth_table(number);
+                ptr_current_driver->set_pinout_state(bitset);
             }
 
             // 1. Start timer if condition met
@@ -78,14 +82,19 @@ void Manager::event()
             {
                 idle_time = stop_timer - start_timer;
                 
-                if (idle_time >= 1000) { return; }  // exit menu mode
-                else 
+                // Exit menu mode, or change tube driver
+                if (idle_time >= 1000) 
+                {
+                    // rtc.set date time
+                    return; 
+                }
+                else
                 { 
                     driver_index = (driver_index >= 3) ? 0 : driver_index + 1;
-                    ptr_driver = *(m_drivers + driver_index);
+                    ptr_current_driver = *(m_drivers + driver_index);
                     start_timer = 0;
                     stop_timer = 0; 
-                }   // Change tube driver
+                }
             }
         }
     }

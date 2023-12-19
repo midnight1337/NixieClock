@@ -3,6 +3,9 @@ Title: Nixie Clock
 Author: midnight1337
 Date: 18-12-2023
 */
+/*
+TODO: RTC libraries and functionality
+*/
 #include "manager.h"
 
 
