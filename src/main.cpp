@@ -4,7 +4,10 @@ Author: midnight1337
 Date: 18-12-2023
 */
 /*
-TODO: RTC libraries and functionality
+TODO:
+1.RTC libraries and functionality
+2.Time format logic for each digit
+3.Store in table current time digit for each driver
 */
 #include "manager.h"
 

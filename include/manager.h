@@ -28,9 +28,9 @@ class Manager
         void event();
 
         void run_tubes_test();
-        void tubes_blinking();
-        void turn_on_tube(int id, bool all_tubes = false);
-        void turn_off_tube(int id, bool all_tubes = false);
+        void tubes_blinking(uint8_t how_many_times, uint16_t delay_time = 200, int8_t ommit_driver_id = -1);
+        void turn_on_tubes(int8_t ommit_driver_id = -1);
+        void turn_off_tubes(int8_t ommit_driver_id = -1);
 };
 
 #endif

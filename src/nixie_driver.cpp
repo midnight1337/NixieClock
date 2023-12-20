@@ -10,7 +10,7 @@ void NixieDriver::set_pinout_state(uint8_t bitset)
     digitalWrite(m_pin_d, bitset & 0b1000); // MSB
 }
 
-uint8_t NixieDriver::truth_table(uint8_t number)
+uint8_t NixieDriver::truth_table(int8_t number)
 {
     /*
         Pinouts on PCB are reversed, in that case we need to reverse truth table for drivers
@@ -49,7 +49,7 @@ uint8_t NixieDriver::truth_table(uint8_t number)
     case 0x09: // 1 => 9
         bitset = 0b0001;
         break;
-    default:    // display none if out of range
+    default:    // display off if out of range
         bitset = 0b1111;
         break;
     }

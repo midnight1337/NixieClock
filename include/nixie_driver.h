@@ -15,7 +15,7 @@ class NixieDriver
     public:
         NixieDriver(int pin_a, int pin_b, int pin_c, int pin_d);
         void set_pinout_state(uint8_t bitset);
-        uint8_t truth_table(uint8_t number);
+        uint8_t truth_table(int8_t number);
 };
 
 #endif

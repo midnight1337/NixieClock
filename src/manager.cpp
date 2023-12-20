@@ -45,33 +45,31 @@ void Manager::event()
     if (m_switch_menu.event())
     {
         bool is_pressed = false;
-        int driver_index = 0;
         int start_timer = 0;
         int stop_timer = 0;
         int idle_time = 0;
+        uint8_t driver_index = 0;
         uint8_t number = 0;
         uint8_t bitset = 0b0000;
-        NixieDriver* ptr_current_driver = m_drivers[driver_index];
-        //NixieDriver* ptr_current_driver = *(m_drivers + driver_index);
         
         tubes_blinking();
 
         while (true)
         {
-            // All tubes are blinking, despite selected one by driver_index
+            tubes_blinking(1, 500, driver_index);
 
             if (m_switch_next.event())
             {
                 // Verify if time format allows increment time digit
-                bitset = ptr_current_driver->truth_table(number);
-                ptr_current_driver->set_pinout_state(bitset);
+                bitset = m_drivers[driver_index]->truth_table(number);
+                m_drivers[driver_index]->set_pinout_state(bitset);
             }
 
             if (m_switch_previous.event())
             {
                 // Verify if time format allows decrement time digit
-                bitset = ptr_current_driver->truth_table(number);
-                ptr_current_driver->set_pinout_state(bitset);
+                bitset = m_drivers[driver_index]->truth_table(number);
+                m_drivers[driver_index]->set_pinout_state(bitset);
             }
 
             // 1. Start timer if condition met
@@ -89,14 +87,16 @@ void Manager::event()
                 if (idle_time >= 1000) 
                 {
                     // rtc.set date time
+                    tubes_blinking();
+
                     return; 
                 }
                 else
                 { 
                     driver_index = ( driver_index >= 3 ) ? 0 : driver_index + 1;
-                    ptr_current_driver = m_drivers[driver_index];
+                    is_pressed = false;
                     start_timer = 0;
-                    stop_timer = 0; 
+                    stop_timer = 0;
                 }
             }
         }
@@ -126,25 +126,44 @@ void Manager::run_tubes_test()
    }
 }
 
-void Manager::tubes_blinking()
+void Manager::tubes_blinking(uint8_t how_many_times = 3, uint16_t delay_time = 200, int8_t ommit_driver_id = -1)
 {
-
-}
-
-void Manager::turn_on_tube(int id, bool all_tubes = false)
-{
-    if (all_tubes)
+    for (int i = 0; i < how_many_times; i++)
     {
-        // ...
-        return;
+        turn_off_tubes(ommit_driver_id);
+
+        delay(delay_time);
+
+        turn_on_tubes(ommit_driver_id);
+
+        delay(delay_time);
     }
 }
 
-void Manager::turn_off_tube(int id, bool all_tubes = false)
+void Manager::turn_on_tubes(int8_t ommit_driver_id = -1)
 {
-    if (all_tubes)
+    //  Get truth table for time for each driver
+    uint8_t bitset;
+    uint8_t time_number; // TODO!!!
+
+    for (int i = 0; i < 3; i++)
     {
-        // ...
-        return;
+        if (i == ommit_driver_id) { continue; }
+        
+        bitset = m_drivers[i]->truth_table(time_number);
+        m_drivers[i]->set_pinout_state(bitset);
+    }
+}
+
+void Manager::turn_off_tubes(int8_t ommit_driver_id = -1)
+{
+    //  Return 0b1111 so drivers are off
+    uint8_t bitset = m_drivers[0]->truth_table(-1);
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (i == ommit_driver_id) { continue; }
+
+        m_drivers[i]->set_pinout_state(bitset);
     }
 }
