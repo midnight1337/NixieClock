@@ -27,7 +27,7 @@ class Manager
         void setup();
         void event();
 
-        void run_tubes_test_on_power_on();
+        void run_tubes_test();
         void tubes_blinking();
         void turn_on_tube(int id, bool all_tubes = false);
         void turn_off_tube(int id, bool all_tubes = false);

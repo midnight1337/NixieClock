@@ -49,8 +49,8 @@ uint8_t NixieDriver::truth_table(uint8_t number)
     case 0x09: // 1 => 9
         bitset = 0b0001;
         break;
-    default:    // display 0 if out of range
-        bitset = 0b0000;
+    default:    // display none if out of range
+        bitset = 0b1111;
         break;
     }
     

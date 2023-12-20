@@ -37,6 +37,7 @@ void Manager::setup()
         pinMode(i, OUTPUT);
     }
 
+    run_tubes_test();
 }
 
 void Manager::event()
@@ -50,12 +51,14 @@ void Manager::event()
         int idle_time = 0;
         uint8_t number = 0;
         uint8_t bitset = 0b0000;
-        NixieDriver* ptr_current_driver = *(m_drivers + driver_index);
-        // ... blink mode
+        NixieDriver* ptr_current_driver = m_drivers[driver_index];
+        //NixieDriver* ptr_current_driver = *(m_drivers + driver_index);
+        
+        tubes_blinking();
 
         while (true)
         {
-            // ... blink mode
+            // All tubes are blinking, despite selected one by driver_index
 
             if (m_switch_next.event())
             {
@@ -77,12 +80,12 @@ void Manager::event()
             // 2. Update stop timer if condition met
             if (m_switch_menu.event() && is_pressed) { stop_timer = millis(); }
 
-            // 3. If button was released after it was pressed, measure idle_time and determine function
+            // 3. If button was released after it was pressed, measure idle_time and determine further instruction
             if (!m_switch_menu.event() && is_pressed)
             {
                 idle_time = stop_timer - start_timer;
                 
-                // Exit menu mode, or change tube driver
+                // Exit from menu mode, or change tube driver
                 if (idle_time >= 1000) 
                 {
                     // rtc.set date time
@@ -90,21 +93,37 @@ void Manager::event()
                 }
                 else
                 { 
-                    driver_index = (driver_index >= 3) ? 0 : driver_index + 1;
-                    ptr_current_driver = *(m_drivers + driver_index);
+                    driver_index = ( driver_index >= 3 ) ? 0 : driver_index + 1;
+                    ptr_current_driver = m_drivers[driver_index];
                     start_timer = 0;
                     stop_timer = 0; 
                 }
             }
         }
+
+        tubes_blinking();
+
     }
 }
 
-void Manager::run_tubes_test_on_power_on()
+void Manager::run_tubes_test()
 {
     /*
-        Display number from 0-9 on every tube
+        Display digit from 0-9 on every tube, when device powered on.
     */
+   uint8_t bitset;
+
+   for (int i = 0; i < 10; i++)
+   {
+        bitset = m_drivers[0]->truth_table(i);
+
+        m_drivers[0]->set_pinout_state(bitset);
+        m_drivers[1]->set_pinout_state(bitset);
+        m_drivers[2]->set_pinout_state(bitset);
+        m_drivers[3]->set_pinout_state(bitset);
+
+        delay(200);
+   }
 }
 
 void Manager::tubes_blinking()
@@ -119,8 +138,6 @@ void Manager::turn_on_tube(int id, bool all_tubes = false)
         // ...
         return;
     }
-
-
 }
 
 void Manager::turn_off_tube(int id, bool all_tubes = false)
@@ -130,6 +147,4 @@ void Manager::turn_off_tube(int id, bool all_tubes = false)
         // ...
         return;
     }
-
-
 }
