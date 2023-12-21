@@ -1,15 +1,17 @@
 /*
 Title: Nixie Clock
 Author: midnight1337
+Description: Nixie tube clock in HH:MM format
 Date: 18-12-2023
 */
+
 /*
 TODO:
-1.RTC libraries and functionality
-2.Time format logic for each digit
-3.Store in table current time digit for each driver
+1.Time format logic for each digit
+2.Use onebutton lib in event() method
 */
-#include "manager.h"
+
+#include "../include/manager.h"
 
 
 int main()

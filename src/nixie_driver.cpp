@@ -22,7 +22,7 @@ uint8_t NixieDriver::truth_table(int8_t number)
     case 0x00: // 0
         bitset = 0b0000;
         break;
-    case 0x01: // |1001| => |0001|, bitset of '9' will display '1'
+    case 0x01: // |1001| => |0001|, bitset of '9' will display '1' on tube
         bitset = 0b1001;
         break;
     case 0x02: // 8 => 2

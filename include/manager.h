@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include "nixie_driver.h"
-#include "rtc.h"
+#include "clock.h"
 #include "switch.h"
 #include "hardware_pinout.h"
 
@@ -18,8 +18,7 @@ class Manager
         Switch m_switch_menu;
         Switch m_switch_previous;
         Switch m_switch_next;
-        Rtc m_rtc;
-        
+        Clock m_clock;
         
     public:
         Manager();
@@ -27,6 +26,7 @@ class Manager
         void setup();
         void event();
 
+        void display_time();
         void run_tubes_test();
         void tubes_blinking(uint8_t how_many_times, uint16_t delay_time = 200, int8_t ommit_driver_id = -1);
         void turn_on_tubes(int8_t ommit_driver_id = -1);

@@ -9,7 +9,7 @@ m_driver_3(Pin_A4, Pin_B4, Pin_C4, Pin_D4),
 m_switch_menu(Pin_EDIT_AND_NEXT),
 m_switch_previous(Pin_DOWN),
 m_switch_next(Pin_UP),
-m_rtc()
+m_clock()
 {}
 
 
@@ -21,7 +21,8 @@ void Manager::run()
         3.Setup driver state so nixie tube turns for corresponding digit
         4.Check for events
     */
-    m_rtc.read_time();
+    m_clock.read_time();
+    display_time();
     event();
 }
 
@@ -38,6 +39,19 @@ void Manager::setup()
     }
 
     run_tubes_test();
+}
+
+void Manager::display_time()
+{
+    uint8_t bitset;
+    uint8_t digit;
+
+    for (int i = 0; i < 4; i++)
+    {
+        digit = m_clock.time_digit(i);
+        bitset = m_drivers[i]->truth_table(digit);
+        m_drivers[i]->set_pinout_state(bitset);
+    }
 }
 
 void Manager::event()
@@ -146,7 +160,7 @@ void Manager::turn_on_tubes(int8_t ommit_driver_id = -1)
     uint8_t bitset;
     uint8_t time_number; // TODO!!!
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
         if (i == ommit_driver_id) { continue; }
         
@@ -160,7 +174,7 @@ void Manager::turn_off_tubes(int8_t ommit_driver_id = -1)
     //  Return 0b1111 so drivers are off
     uint8_t bitset = m_drivers[0]->truth_table(-1);
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
         if (i == ommit_driver_id) { continue; }
 
