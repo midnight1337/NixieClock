@@ -33,10 +33,7 @@ void Manager::setup()
     */
     pinMode(Pin_EDIT_AND_NEXT, INPUT);
 
-    for (int i = 0; i <= 16; i++)
-    {
-        pinMode(i, OUTPUT);
-    }
+    for (int i = 0; i <= 16; i++) { pinMode(i, OUTPUT); }
 
     run_tubes_test();
 }
@@ -48,7 +45,7 @@ void Manager::display_time()
 
     for (int i = 0; i < 4; i++)
     {
-        digit = m_clock.time_digit(i);
+        digit = m_clock.time_digit()[i];
         bitset = m_drivers[i]->truth_table(digit);
         m_drivers[i]->set_pinout_state(bitset);
     }
@@ -63,7 +60,7 @@ void Manager::event()
         int stop_timer = 0;
         int idle_time = 0;
         uint8_t driver_index = 0;
-        uint8_t number = 0;
+        int8_t digit = 0;
         uint8_t bitset = 0b0000;
         
         tubes_blinking();
@@ -74,20 +71,39 @@ void Manager::event()
 
             if (m_switch_next.event())
             {
-                // Verify if time format allows increment time digit
-                bitset = m_drivers[driver_index]->truth_table(number);
+                /*
+                This is all wrong, think how would you store local digit, how to verify them, how to set it in rtc, how to display it on driver etc.!!!
+                */
+                // Get current clock digit and increment it
+                digit = m_clock.time_digit()[driver_index]++;
+
+                // Verify that digit
+                digit = m_clock.is_valid_time(digit, driver_index);
+
+                // Set that digit into driver
+                bitset = m_drivers[driver_index]->truth_table(digit);
                 m_drivers[driver_index]->set_pinout_state(bitset);
             }
 
             if (m_switch_previous.event())
             {
-                // Verify if time format allows decrement time digit
-                bitset = m_drivers[driver_index]->truth_table(number);
+                // Get current clock digit and decrement it
+                digit = m_clock.time_digit()[driver_index]--;
+
+                // Verify that digit
+                m_clock.is_valid_time(digit, driver_index);
+
+                // Set that digit into driver
+                bitset = m_drivers[driver_index]->truth_table(digit);
                 m_drivers[driver_index]->set_pinout_state(bitset);
             }
 
             // 1. Start timer if condition met
-            if (m_switch_menu.event() && !is_pressed) { is_pressed = true; start_timer = millis(); }
+            if (m_switch_menu.event() && !is_pressed) 
+            { 
+                is_pressed = true; 
+                start_timer = millis(); 
+            }
 
             // 2. Update stop timer if condition met
             if (m_switch_menu.event() && is_pressed) { stop_timer = millis(); }
@@ -97,11 +113,10 @@ void Manager::event()
             {
                 idle_time = stop_timer - start_timer;
                 
-                // Exit from menu mode, or change tube driver
+                // Save new time in rtc and from menu mode, or change tube driver and continue edit mode
                 if (idle_time >= 1000) 
                 {
-                    // rtc.set date time
-                    tubes_blinking();
+                    m_clock.set_new_time();
 
                     return; 
                 }
@@ -131,30 +146,27 @@ void Manager::run_tubes_test()
    {
         bitset = m_drivers[0]->truth_table(i);
 
-        m_drivers[0]->set_pinout_state(bitset);
-        m_drivers[1]->set_pinout_state(bitset);
-        m_drivers[2]->set_pinout_state(bitset);
-        m_drivers[3]->set_pinout_state(bitset);
+        for (int j = 1; j < 4; j++) { m_drivers[j]->set_pinout_state(bitset); }
 
         delay(200);
    }
 }
 
-void Manager::tubes_blinking(uint8_t how_many_times = 3, uint16_t delay_time = 200, int8_t ommit_driver_id = -1)
+void Manager::tubes_blinking(uint8_t how_many_times, uint16_t delay_time, int8_t ommit_driver_index)
 {
     for (int i = 0; i < how_many_times; i++)
     {
-        turn_off_tubes(ommit_driver_id);
+        turn_off_tubes(ommit_driver_index);
 
         delay(delay_time);
 
-        turn_on_tubes(ommit_driver_id);
+        turn_on_tubes(ommit_driver_index);
 
         delay(delay_time);
     }
 }
 
-void Manager::turn_on_tubes(int8_t ommit_driver_id = -1)
+void Manager::turn_on_tubes(int8_t ommit_driver_index)
 {
     //  Get truth table for time for each driver
     uint8_t bitset;
@@ -162,21 +174,21 @@ void Manager::turn_on_tubes(int8_t ommit_driver_id = -1)
 
     for (int i = 0; i < 4; i++)
     {
-        if (i == ommit_driver_id) { continue; }
+        if (i == ommit_driver_index) { continue; }
         
         bitset = m_drivers[i]->truth_table(time_number);
         m_drivers[i]->set_pinout_state(bitset);
     }
 }
 
-void Manager::turn_off_tubes(int8_t ommit_driver_id = -1)
+void Manager::turn_off_tubes(int8_t ommit_driver_index)
 {
     //  Return 0b1111 so drivers are off
     uint8_t bitset = m_drivers[0]->truth_table(-1);
 
     for (int i = 0; i < 4; i++)
     {
-        if (i == ommit_driver_id) { continue; }
+        if (i == ommit_driver_index) { continue; }
 
         m_drivers[i]->set_pinout_state(bitset);
     }
