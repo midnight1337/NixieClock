@@ -1,4 +1,9 @@
-/* DEFINED DIGITAL MICROCONTROLLER VARIABLES */
+/* DEFINED DIGITAL MICROCONTROLLER PINOUTS */
+
+/*
+WIRING SETUP FOR ARDUINO PRO MINI
+
+*/
 
 
 enum DriversPinout
@@ -32,7 +37,14 @@ enum DriversPinout
 enum MicroswitchPinout
 {
     // // MCU -> microswitch
-    Pin_EDIT_AND_NEXT = 17,  // Analog 3, Edit Mode; Next digit.
+    Pin_EVENT = 17,  // Analog 3, Edit Mode; Next digit.
     Pin_DOWN = 20,  // Analog 6, Digit down
     Pin_UP = 21,    // Analog 7, Digit up
+};
+
+// This enum is unused so far
+enum ClockPinout
+{
+    Pin_SDA = 18,   // Analog 4
+    Pin_SCL = 19,   // Analog 5
 };

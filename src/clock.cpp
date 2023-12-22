@@ -5,10 +5,7 @@ Clock::Clock() : m_rtc()
     m_rtc.begin();
 }
 
-uint8_t* Clock::time()
-{
-    return *m_time_array;
-}
+uint8_t* Clock::time_digit() { return m_time_digits; }
 
 void Clock::read_time()
 {
@@ -16,9 +13,9 @@ void Clock::read_time()
     m_hour = time.hour;
     m_minute = time.minute;
     m_second = time.second;
-}
 
-uint8_t* Clock::time_digit() { return m_time_digits; }
+    slice_time_into_digits();
+}
 
 void Clock::slice_time_into_digits()
 {
@@ -26,6 +23,11 @@ void Clock::slice_time_into_digits()
     m_time_digits[1] = m_hour % 10;
     m_time_digits[2] = (m_minute / 10) % 10;
     m_time_digits[3] = m_minute % 10;
+}
+
+void Clock::set_new_time(uint8_t hour, uint8_t minute)
+{
+    m_rtc.setDateTime(0, 0, 0, hour, minute, 0);
 }
 
 // This is not done yet
@@ -60,11 +62,6 @@ uint8_t Clock::is_valid_time(int8_t digit, uint8_t driver_index)
             break;
     }
 return valid_digit;
-}
-
-void Clock::set_new_time(uint8_t hour, uint8_t minute, uint8_t second)
-{
-    m_rtc.setDateTime(0, 0, 0, hour, minute, second);
 }
 
 void Clock::initial_rtc_setup()

@@ -14,7 +14,7 @@ class Manager
         NixieDriver m_driver_1;
         NixieDriver m_driver_2;
         NixieDriver m_driver_3;
-        NixieDriver* m_drivers[4] = { &m_driver_0, &m_driver_1, &m_driver_2, &m_driver_3 };
+        NixieDriver* m_drivers[4] = { &m_driver_0, &m_driver_1, &m_driver_2, &m_driver_3 }; // array of pointers is necessary to store references, not copies
         Switch m_switch_menu;
         Switch m_switch_previous;
         Switch m_switch_next;

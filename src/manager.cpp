@@ -6,7 +6,7 @@ m_driver_0(Pin_A1, Pin_B1, Pin_C1, Pin_D1),
 m_driver_1(Pin_A2, Pin_B2, Pin_C2, Pin_D2),
 m_driver_2(Pin_A3, Pin_B3, Pin_C3, Pin_D3),
 m_driver_3(Pin_A4, Pin_B4, Pin_C4, Pin_D4),
-m_switch_menu(Pin_EDIT_AND_NEXT),
+m_switch_menu(Pin_EVENT),
 m_switch_previous(Pin_DOWN),
 m_switch_next(Pin_UP),
 m_clock()
@@ -16,10 +16,9 @@ m_clock()
 void Manager::run()
 {
     /*
-        1.Read time
-        2.Decode every digit from time into truth table of Drivers
-        3.Setup driver state so nixie tube turns for corresponding digit
-        4.Check for events
+        1.Read time (read current time from rtc and slice it into each digit)
+        2.Display time (decode each digit according to drivers truth table, set corresponding state to digit on driver)
+        3.Check for events
     */
     m_clock.read_time();
     display_time();
@@ -28,14 +27,10 @@ void Manager::run()
 
 void Manager::setup()
 {
-    /*
-        Initialise board pinout
-    */
-    pinMode(Pin_EDIT_AND_NEXT, INPUT);
+    pinMode(Pin_EVENT, INPUT);
+    // Can't set pinMode for other switches (Pin_UP, Pin_DOWN) because they are not digital, but it doesn't interfere with reading its state directly as HIGH or LOW
 
     for (int i = 0; i <= 16; i++) { pinMode(i, OUTPUT); }
-
-    run_tubes_test();
 }
 
 void Manager::display_time()
@@ -59,9 +54,12 @@ void Manager::event()
         int start_timer = 0;
         int stop_timer = 0;
         int idle_time = 0;
+        int8_t new_digit = 0;
         uint8_t driver_index = 0;
-        int8_t digit = 0;
         uint8_t bitset = 0b0000;
+        uint8_t new_time_buffer[4];
+
+        for (int i = 0; i < 4; i++) { new_time_buffer[i] = m_clock.time_digit()[i]; }
         
         tubes_blinking();
 
@@ -71,33 +69,33 @@ void Manager::event()
 
             if (m_switch_next.event())
             {
-                /*
-                This is all wrong, think how would you store local digit, how to verify them, how to set it in rtc, how to display it on driver etc.!!!
-                */
-                // Get current clock digit and increment it
-                digit = m_clock.time_digit()[driver_index]++;
+                // Get new clock digit
+                new_digit = m_clock.time_digit()[driver_index]++;
 
-                // Verify that digit
-                digit = m_clock.is_valid_time(digit, driver_index);
+                // Verify new clock digit and get valid one
+                new_time_buffer[driver_index] = m_clock.is_valid_time(new_digit, driver_index);
+                new_digit = new_time_buffer[driver_index];
 
-                // Set that digit into driver
-                bitset = m_drivers[driver_index]->truth_table(digit);
+                // Set new clock digit into driver
+                bitset = m_drivers[driver_index]->truth_table(new_digit);
                 m_drivers[driver_index]->set_pinout_state(bitset);
             }
 
             if (m_switch_previous.event())
             {
-                // Get current clock digit and decrement it
-                digit = m_clock.time_digit()[driver_index]--;
+                // Get new clock digit
+                new_digit = m_clock.time_digit()[driver_index]--;
 
-                // Verify that digit
-                m_clock.is_valid_time(digit, driver_index);
+                // Verify new clock digit and get valid one
+                new_time_buffer[driver_index] = m_clock.is_valid_time(new_digit, driver_index);
+                new_digit = new_time_buffer[driver_index];
 
-                // Set that digit into driver
-                bitset = m_drivers[driver_index]->truth_table(digit);
+                // Set new clock digit into driver
+                bitset = m_drivers[driver_index]->truth_table(new_digit);
                 m_drivers[driver_index]->set_pinout_state(bitset);
             }
-
+            
+            /* THESE EVENT INSTRUCTIONS BELOW ARE WRONG BRO */
             // 1. Start timer if condition met
             if (m_switch_menu.event() && !is_pressed) 
             { 
@@ -113,10 +111,13 @@ void Manager::event()
             {
                 idle_time = stop_timer - start_timer;
                 
-                // Save new time in rtc and from menu mode, or change tube driver and continue edit mode
+                // Save new time in rtc and exit from menu mode, or change tube driver and continue edit mode
                 if (idle_time >= 1000) 
                 {
-                    m_clock.set_new_time();
+                    uint8_t new_hour = (new_time_buffer[0] * 10) + new_time_buffer[1];
+                    uint8_t new_minute = (new_time_buffer[2] * 10) + new_time_buffer[3];
+
+                    m_clock.set_new_time(new_hour, new_minute);
 
                     return; 
                 }
@@ -129,17 +130,13 @@ void Manager::event()
                 }
             }
         }
-
         tubes_blinking();
-
     }
 }
 
 void Manager::run_tubes_test()
 {
-    /*
-        Display digit from 0-9 on every tube, when device powered on.
-    */
+    /* Display digit from 0-9 on every tube */
    uint8_t bitset;
 
    for (int i = 0; i < 10; i++)
@@ -168,15 +165,16 @@ void Manager::tubes_blinking(uint8_t how_many_times, uint16_t delay_time, int8_t
 
 void Manager::turn_on_tubes(int8_t ommit_driver_index)
 {
-    //  Get truth table for time for each driver
+    //  Get truth table for each driver's digit
     uint8_t bitset;
-    uint8_t time_number; // TODO!!!
+    uint8_t digit;
 
     for (int i = 0; i < 4; i++)
     {
         if (i == ommit_driver_index) { continue; }
         
-        bitset = m_drivers[i]->truth_table(time_number);
+        digit = m_clock.time_digit()[i];
+        bitset = m_drivers[i]->truth_table(digit);
         m_drivers[i]->set_pinout_state(bitset);
     }
 }

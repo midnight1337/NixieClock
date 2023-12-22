@@ -23,6 +23,8 @@ int main()
   // Serial.begin(115200);
 
   Manager manager{};
+  manager.setup();
+  manager.run_tubes_test();
 
   while (true)
   {
