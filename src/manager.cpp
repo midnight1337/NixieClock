@@ -2,11 +2,11 @@
 
 
 Manager::Manager() : 
-m_driver_0(Pin_A1, Pin_B1, Pin_C1, Pin_D1),
-m_driver_1(Pin_A2, Pin_B2, Pin_C2, Pin_D2),
-m_driver_2(Pin_A3, Pin_B3, Pin_C3, Pin_D3),
-m_driver_3(Pin_A4, Pin_B4, Pin_C4, Pin_D4),
-m_switch_menu(Pin_EVENT),
+m_driver_0(Pin_A0, Pin_B0, Pin_C0, Pin_D0),
+m_driver_1(Pin_A1, Pin_B1, Pin_C1, Pin_D1),
+m_driver_2(Pin_A2, Pin_B2, Pin_C2, Pin_D2),
+m_driver_3(Pin_A3, Pin_B3, Pin_C3, Pin_D3),
+m_switch_menu(Pin_MENU),
 m_switch_previous(Pin_DOWN),
 m_switch_next(Pin_UP),
 m_clock()
@@ -27,7 +27,7 @@ void Manager::run()
 
 void Manager::setup()
 {
-    pinMode(Pin_EVENT, INPUT);
+    pinMode(Pin_MENU, INPUT);
     // Can't set pinMode for other switches (Pin_UP, Pin_DOWN) because they are not digital, but it doesn't interfere with reading its state directly as HIGH or LOW
 
     for (int i = 0; i <= 16; i++) { pinMode(i, OUTPUT); }
