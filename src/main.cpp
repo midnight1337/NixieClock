@@ -7,11 +7,9 @@ Date: 18-12-2023
 
 /*
 TODO:
-1.Time format logic for each digit in progress
-1a.Maybe make it not for each digit but just for HH:MM format??
-1b.manager::event() method in progress
-2.Use onebutton lib in event() method
-3.Current driver in edit mode is blinking
+1.Time format logic for each digit - change it according to drivers group
+2.manager::event() method in progress - Use onebutton lib in event() method
+3.manager::blinking_tubes - do it according to drivers group??
 */
 
 #include "../include/manager.h"

@@ -5,24 +5,13 @@ Clock::Clock() : m_rtc()
     m_rtc.begin();
 }
 
-uint8_t* Clock::time_digit() { return m_time_digits; }
+uint8_t* Clock::time() { return *m_time_group; }
 
 void Clock::read_time()
 {
     RTCDateTime time = m_rtc.getDateTime();
     m_hour = time.hour;
     m_minute = time.minute;
-    m_second = time.second;
-
-    slice_time_into_digits();
-}
-
-void Clock::slice_time_into_digits()
-{
-    m_time_digits[0] = (m_hour / 10) % 10;
-    m_time_digits[1] = m_hour % 10;
-    m_time_digits[2] = (m_minute / 10) % 10;
-    m_time_digits[3] = m_minute % 10;
 }
 
 void Clock::set_new_time(uint8_t hour, uint8_t minute)
@@ -30,9 +19,9 @@ void Clock::set_new_time(uint8_t hour, uint8_t minute)
     m_rtc.setDateTime(0, 0, 0, hour, minute, 0);
 }
 
-// This is not done yet
 uint8_t Clock::is_valid_time(int8_t digit, uint8_t driver_index)
 {
+    // Change cases to according to driver group
     uint8_t valid_digit;
 
     switch (driver_index)

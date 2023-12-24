@@ -40,7 +40,7 @@ void Manager::display_time()
 
     for (int i = 0; i < 4; i++)
     {
-        digit = m_clock.time_digit()[i];
+        //digit = m_clock.time_digit()[i];
         bitset = m_drivers[i]->truth_table(digit);
         m_drivers[i]->set_pinout_state(bitset);
     }
@@ -55,44 +55,43 @@ void Manager::event()
         int stop_timer = 0;
         int idle_time = 0;
         int8_t new_digit = 0;
-        uint8_t driver_index = 0;
+        int8_t new_time = 0;
         uint8_t bitset = 0b0000;
-        uint8_t new_time_buffer[4];
+        uint8_t drivers_time_group_index = 0;
+        uint8_t new_time_buffer[2];
+        NixieDriver* current_driver;
 
-        for (int i = 0; i < 4; i++) { new_time_buffer[i] = m_clock.time_digit()[i]; }
+        for (int i = 0; i < 2; i++) { new_time_buffer[i] = m_clock.time()[i]; }
         
         tubes_blinking();
 
         while (true)
         {
-            tubes_blinking(1, 500, driver_index);
+            //tubes_blinking(1, 500, driver_index);
 
-            if (m_switch_next.event())
+            if (m_switch_next.event() || m_switch_previous.event())
             {
-                // Get new clock digit
-                new_digit = m_clock.time_digit()[driver_index]++;
+                // Get current clock digits (HH or MM) and do proper action
+                if (m_switch_next.event()) { new_time = new_time_buffer[drivers_time_group_index]++; }
+                else if (m_switch_previous.event()) { new_time = new_time_buffer[drivers_time_group_index]--; }
+                else { break; }
+                
+                // Verify new clock digits and get valid one
+                new_time = m_clock.is_valid_time(new_time, drivers_time_group_index);
+                new_time_buffer[drivers_time_group_index] = new_time;
 
-                // Verify new clock digit and get valid one
-                new_time_buffer[driver_index] = m_clock.is_valid_time(new_digit, driver_index);
-                new_digit = new_time_buffer[driver_index];
+                // Set new clock digits into drivers according to drivers group
+                for (int i = 0; i < 2; i++)
+                {
+                    current_driver = m_drivers_time_group[drivers_time_group_index + i][i];
 
-                // Set new clock digit into driver
-                bitset = m_drivers[driver_index]->truth_table(new_digit);
-                m_drivers[driver_index]->set_pinout_state(bitset);
-            }
+                    // Determine digit weigth according to current driver from drivers group
+                    new_digit = (i & 1 == 0) ? new_time % 10 : (new_time / 10) % 10;
 
-            if (m_switch_previous.event())
-            {
-                // Get new clock digit
-                new_digit = m_clock.time_digit()[driver_index]--;
-
-                // Verify new clock digit and get valid one
-                new_time_buffer[driver_index] = m_clock.is_valid_time(new_digit, driver_index);
-                new_digit = new_time_buffer[driver_index];
-
-                // Set new clock digit into driver
-                bitset = m_drivers[driver_index]->truth_table(new_digit);
-                m_drivers[driver_index]->set_pinout_state(bitset);
+                    // Set new clock digits into drivers
+                    bitset = current_driver->truth_table(new_digit);
+                    current_driver->set_pinout_state(bitset);
+                }
             }
             
             /* THESE EVENT INSTRUCTIONS BELOW ARE WRONG BRO */
@@ -123,7 +122,7 @@ void Manager::event()
                 }
                 else
                 { 
-                    driver_index = ( driver_index >= 3 ) ? 0 : driver_index + 1;
+                    drivers_time_group_index = ( drivers_time_group_index >= 1 ) ? 0 : drivers_time_group_index + 1;
                     is_pressed = false;
                     start_timer = 0;
                     stop_timer = 0;
@@ -173,7 +172,7 @@ void Manager::turn_on_tubes(int8_t ommit_driver_index)
     {
         if (i == ommit_driver_index) { continue; }
         
-        digit = m_clock.time_digit()[i];
+        //digit = m_clock.time_digit()[i];
         bitset = m_drivers[i]->truth_table(digit);
         m_drivers[i]->set_pinout_state(bitset);
     }
