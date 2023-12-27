@@ -34,9 +34,9 @@ class Manager
 
         void display_time();
         void run_tubes_test();
-        void tubes_blinking(uint8_t how_many_times = 3, uint16_t delay_time = 200, int8_t ommit_digit_drivers_time_group = -1);
-        void turn_on_tubes(int8_t ommit_digit_drivers_time_group = -1);
-        void turn_off_tubes(int8_t ommit_digit_drivers_time_group = -1);
+        void tubes_blinking(uint8_t how_many_times = 3, uint16_t delay_time = 200, int8_t ommit_digit_group = -1);
+        void turn_on_tubes(int8_t ommit_digit_group = -1);
+        void turn_off_tubes(int8_t ommit_digit_group = -1);
 };
 
 #endif

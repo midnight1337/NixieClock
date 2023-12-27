@@ -18,7 +18,7 @@ class Clock
     
     public:
         Clock();
-        uint8_t* time();
+        uint8_t* time_group();
         void read_time();
         void set_new_time(uint8_t hour, uint8_t minute);
         uint8_t is_valid_time(int8_t digit, uint8_t driver_index);
