@@ -57,7 +57,7 @@ void Manager::event()
         int8_t new_digit = 0;
         int8_t new_time = 0;
         uint8_t bitset = 0b0000;
-        uint8_t drivers_time_group_index = 0;
+        uint8_t time_group_index = 0;
         uint8_t new_time_buffer[2];
         NixieDriver* current_driver;
 
@@ -67,23 +67,23 @@ void Manager::event()
 
         while (true)
         {
-            //tubes_blinking(1, 500, driver_index);
+            tubes_blinking(1, 500, time_group_index);
 
             if (m_switch_next.event() || m_switch_previous.event())
             {
                 // Get current clock digits (HH or MM) and do proper action
-                if (m_switch_next.event()) { new_time = new_time_buffer[drivers_time_group_index]++; }
-                else if (m_switch_previous.event()) { new_time = new_time_buffer[drivers_time_group_index]--; }
+                if (m_switch_next.event()) { new_time = new_time_buffer[time_group_index]++; }
+                else if (m_switch_previous.event()) { new_time = new_time_buffer[time_group_index]--; }
                 else { break; }
                 
-                // Verify new clock digits and get valid one
-                new_time = m_clock.is_valid_time(new_time, drivers_time_group_index);
-                new_time_buffer[drivers_time_group_index] = new_time;
+                // Verify new time and get valid one, according to each digit time logic
+                new_time = m_clock.is_valid_time(new_time, time_group_index);
+                new_time_buffer[time_group_index] = new_time;
 
                 // Set new clock digits into drivers according to drivers group
                 for (int i = 0; i < 2; i++)
                 {
-                    current_driver = m_drivers_time_group[drivers_time_group_index + i][i];
+                    current_driver = m_digit_drivers_time_group[time_group_index + i][i];
 
                     // Determine digit weigth according to current driver from drivers group
                     new_digit = (i & 1 == 0) ? new_time % 10 : (new_time / 10) % 10;
@@ -122,14 +122,14 @@ void Manager::event()
                 }
                 else
                 { 
-                    drivers_time_group_index = ( drivers_time_group_index >= 1 ) ? 0 : drivers_time_group_index + 1;
+                    time_group_index = ( time_group_index >= 1 ) ? 0 : time_group_index + 1;
                     is_pressed = false;
                     start_timer = 0;
                     stop_timer = 0;
                 }
             }
         }
-        tubes_blinking();
+        tubes_blinking(5);
     }
 }
 
@@ -148,45 +148,67 @@ void Manager::run_tubes_test()
    }
 }
 
-void Manager::tubes_blinking(uint8_t how_many_times, uint16_t delay_time, int8_t ommit_driver_index)
+void Manager::tubes_blinking(uint8_t how_many_times, uint16_t delay_time, int8_t ommit_digit_drivers_time_group)
 {
     for (int i = 0; i < how_many_times; i++)
     {
-        turn_off_tubes(ommit_driver_index);
+        turn_off_tubes(ommit_digit_drivers_time_group);
 
         delay(delay_time);
 
-        turn_on_tubes(ommit_driver_index);
+        turn_on_tubes(ommit_digit_drivers_time_group);
 
         delay(delay_time);
     }
 }
 
-void Manager::turn_on_tubes(int8_t ommit_driver_index)
+void Manager::turn_on_tubes(int8_t ommit_digit_drivers_time_group)
 {
     //  Get truth table for each driver's digit
     uint8_t bitset;
     uint8_t digit;
+    uint8_t time;
+    NixieDriver* current_driver;
 
-    for (int i = 0; i < 4; i++)
+    // Loop over drivers time group
+    for (int i = 0; i < 2; i++)
     {
-        if (i == ommit_driver_index) { continue; }
+        if (i == ommit_digit_drivers_time_group) { continue; }
         
-        //digit = m_clock.time_digit()[i];
-        bitset = m_drivers[i]->truth_table(digit);
-        m_drivers[i]->set_pinout_state(bitset);
+        time = m_clock.time()[i];
+
+        // Loop over each driver in particular time group
+        for (int j = 0; j < 2; j++)
+        {
+            current_driver = m_digit_drivers_time_group[i][j];
+            
+            // Determine digit weigth according to current driver
+            digit = (j & 1 == 0) ? time % 10 : (time / 10) % 10;
+
+            // Set new clock digit into driver
+            bitset = current_driver->truth_table(digit);
+            current_driver->set_pinout_state(bitset);
+        }
     }
 }
 
-void Manager::turn_off_tubes(int8_t ommit_driver_index)
+void Manager::turn_off_tubes(int8_t ommit_digit_drivers_time_group)
 {
     //  Return 0b1111 so drivers are off
-    uint8_t bitset = m_drivers[0]->truth_table(-1);
+    int8_t digit = -1;
+    uint8_t bitset = m_drivers[0]->truth_table(digit);
+    NixieDriver* current_driver;
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 2; i++)
     {
-        if (i == ommit_driver_index) { continue; }
+        if (i == ommit_digit_drivers_time_group) { continue; }
 
-        m_drivers[i]->set_pinout_state(bitset);
+        for (int j = 0; j < 2; j++)
+        {
+            current_driver = m_digit_drivers_time_group[i][j];
+
+            // Turn off driver
+            current_driver->set_pinout_state(bitset);
+        }
     }
 }
