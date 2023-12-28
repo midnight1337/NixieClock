@@ -11,7 +11,7 @@ class Clock
 {
     private:
         DS3231 m_rtc;
-
+        RTCDateTime m_time;
         uint8_t m_hour;
         uint8_t m_minute;
         uint8_t* m_time_group[2] = {&m_hour, &m_minute};
@@ -21,7 +21,7 @@ class Clock
         uint8_t* time_group();
         void read_time();
         void set_new_time(uint8_t hour, uint8_t minute);
-        uint8_t is_valid_time(int8_t digit, uint8_t driver_index);
+        uint8_t is_valid_time(int8_t digit, uint8_t digit_group);
         void initial_rtc_setup();
 };
 

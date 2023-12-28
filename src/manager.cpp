@@ -15,11 +15,6 @@ m_clock()
 
 void Manager::run()
 {
-    /*
-        1.Read time (read current time from rtc and slice it into each digit)
-        2.Display time (decode each digit according to drivers truth table, set corresponding state to digit on driver)
-        3.Check for events
-    */
     m_clock.read_time();
     display_time();
     event();
@@ -40,10 +35,12 @@ void Manager::display_time()
     uint8_t digit;
     uint8_t time;
 
+    // Loop over drivers group
     for (int i = 0; i < 2; i++)
     {
         time = m_clock.time_group()[i];
 
+        // Loop over each driver in current drivers group
         for (int j = 0; j < 2; j++)
         {
             current_driver = m_digit_drivers_time_group[i][j];
@@ -72,6 +69,7 @@ void Manager::event()
         int idle_time = 0;
         bool is_pressed = false;
         
+        // Initialise time buffer with current time hour and minute
         for (int i = 0; i < 2; i++) { new_time_buffer[i] = m_clock.time_group()[i]; }
         
         tubes_blinking();
@@ -197,7 +195,7 @@ void Manager::turn_on_tubes(int8_t ommit_digit_group)
             // Determine digit weigth according to current driver
             digit = (j & 1 == 0) ? time % 10 : (time / 10) % 10;
 
-            // Set new clock digit into driver
+            // Set clock digit into driver
             bitset = current_driver->truth_table(digit);
 
             current_driver->set_pinout_state(bitset);

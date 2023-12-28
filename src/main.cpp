@@ -7,9 +7,7 @@ Date: 18-12-2023
 
 /*
 TODO:
-1.Time format logic for each digit - change it according to drivers group
-2.manager::event() method in progress - Use onebutton lib in event() method
-3.manager::blinking_tubes - do it according to drivers group??
+-manager::event() method in progress - Use onebutton lib in event() method, actual switch instructions are wrong
 */
 
 #include "../include/manager.h"
