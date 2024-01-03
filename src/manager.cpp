@@ -45,7 +45,7 @@ void Manager::display_time()
         {
             current_driver = m_digit_drivers_time_group[i][j];
 
-            digit = (j & 1 == 0) ? time % 10 : (time / 10) & 10;
+            digit = (j == 0) ? (time / 10) & 10 : time % 10;
 
             bitset = current_driver->truth_table(digit);
 
@@ -93,10 +93,11 @@ void Manager::event()
                 // Set new digits into drivers according to digit group
                 for (int i = 0; i < 2; i++)
                 {
-                    current_driver = m_digit_drivers_time_group[digit_group_index + i][i];
+                    current_driver = m_digit_drivers_time_group[digit_group_index][i];
 
                     // Determine digit weigth according to current driver from digit group
-                    new_digit = (i & 1 == 0) ? new_time % 10 : (new_time / 10) % 10;
+                    // For first driver we need a decimal digit and for second driver a unit digit
+                    new_digit = (i == 0) ? (new_time / 10) % 10 : new_time % 10;
 
                     // Set new clock digit into driver
                     bitset = current_driver->truth_table(new_digit);
@@ -193,7 +194,7 @@ void Manager::turn_on_tubes(int8_t ommit_digit_group)
             current_driver = m_digit_drivers_time_group[i][j];
             
             // Determine digit weigth according to current driver
-            digit = (j & 1 == 0) ? time % 10 : (time / 10) % 10;
+            digit = (j == 0) ? (time / 10) % 10 : time % 10;
 
             // Set clock digit into driver
             bitset = current_driver->truth_table(digit);

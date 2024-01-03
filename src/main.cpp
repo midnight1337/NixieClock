@@ -1,7 +1,7 @@
 /*
 Title: Nixie Clock
 Author: midnight1337
-Description: Nixie tube clock in HH:MM format
+Description: Nixie tube clock
 Date: 18-12-2023
 */
 
@@ -9,7 +9,6 @@ Date: 18-12-2023
 TODO:
 -manager::event() method in progress - Use onebutton lib in event() method, actual switch instructions are wrong
 */
-
 #include "../include/manager.h"
 
 
