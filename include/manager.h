@@ -4,12 +4,15 @@
 #include "switch.h"
 #include "hardware_pinout.h"
 
+
 #ifndef MANAGER_H
 #define MANAGER_H
+
 
 class Manager
 {
     private:
+        
         NixieDriver m_driver_0;
         NixieDriver m_driver_1;
         NixieDriver m_driver_2;
@@ -30,7 +33,7 @@ class Manager
         Manager();
         void run();
         void setup();
-        void event();
+        void menu_mode();
 
         void display_time();
         void run_tubes_test();

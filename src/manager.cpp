@@ -17,7 +17,7 @@ void Manager::run()
 {
     m_clock.read_time();
     display_time();
-    event();
+    menu_mode();
 }
 
 void Manager::setup()
@@ -54,7 +54,7 @@ void Manager::display_time()
     }
 }
 
-void Manager::event()
+void Manager::menu_mode()
 {
     if (m_switch_menu.event())
     {
@@ -105,19 +105,25 @@ void Manager::event()
                     current_driver->set_pinout_state(bitset);
                 }
             }
-            
-            /* THESE EVENT INSTRUCTIONS BELOW ARE WRONG BRO */
-            // 1. Start timer if condition met
+
+            // Start timers if condition met
             if (m_switch_menu.event() && !is_pressed) 
             { 
                 is_pressed = true; 
-                start_timer = millis(); 
+                start_timer = millis();
+
+                // hold the switch more than 1 second to meet idle_time for exit condition
+                while (m_switch_menu.event())
+                {
+                    stop_timer = millis();
+                    idle_time = stop_timer - start_timer;
+                    if (idle_time >= 1000) { break; }
+                }
+
+                stop_timer = millis();
             }
 
-            // 2. Update stop timer if condition met
-            if (m_switch_menu.event() && is_pressed) { stop_timer = millis(); }
-
-            // 3. If button was released after it was pressed, measure idle_time and determine further instruction
+            // If button was released after it was pressed, measure idle_time and determine further instruction
             if (!m_switch_menu.event() && is_pressed)
             {
                 idle_time = stop_timer - start_timer;

@@ -1,13 +1,8 @@
-/*
-Title: Nixie Clock
-Author: midnight1337
-Description: Nixie tube clock
-Date: 18-12-2023
-*/
-
-/*
-TODO:
--manager::event() method in progress - Use onebutton lib in event() method, actual switch instructions are wrong
+/**
+ * @title: Nixie Clock
+ * @author midnight1337
+ * @brief Tubes based clock. A class-organized program, designed for driving nixie tubes by SN74141N drivers.
+ * date: 18-12-2023
 */
 #include "../include/manager.h"
 
