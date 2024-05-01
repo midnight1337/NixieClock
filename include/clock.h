@@ -11,17 +11,17 @@ class Clock
 {
     private:
         DS3231 m_rtc;
-        RTCDateTime m_time;
+        RTCDateTime m_date_time;
         uint8_t m_hour;
         uint8_t m_minute;
-        uint8_t* m_time_group[2] = {&m_hour, &m_minute};
+        uint8_t* m_time[2] = { &m_hour, &m_minute };
     
     public:
         Clock();
-        uint8_t* time_group();
-        void read_time();
+        uint8_t* time();
+        void read_rtc_time();
         void set_new_time(uint8_t hour, uint8_t minute);
-        uint8_t is_valid_time(int8_t digit, uint8_t digit_group);
+        uint8_t new_time_validation(int8_t digit, uint8_t time_segment);
         void initial_rtc_setup();
 };
 

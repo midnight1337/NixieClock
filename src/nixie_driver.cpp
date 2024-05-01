@@ -1,9 +1,16 @@
 #include "../include/nixie_driver.h"
 
-NixieDriver::NixieDriver(int pin_a, int pin_b, int pin_c, int pin_d) : m_pin_a(pin_a), m_pin_b(pin_b), m_pin_c(pin_c), m_pin_d(pin_d) {}
+NixieDriver::NixieDriver(int pin_a, int pin_b, int pin_c, int pin_d) : 
+m_pin_a(pin_a), 
+m_pin_b(pin_b), 
+m_pin_c(pin_c), 
+m_pin_d(pin_d) 
+{}
 
-void NixieDriver::set_pinout_state(uint8_t bitset)
+void NixieDriver::set_driver_mode(uint8_t bitset)
 {
+    /* Set pinouts of driver by given bitset, which represents a digit to be displayed */
+
     digitalWrite(m_pin_a, bitset & 0b0001); // LSB
     digitalWrite(m_pin_b, bitset & 0b0010);
     digitalWrite(m_pin_c, bitset & 0b0100);
@@ -13,7 +20,8 @@ void NixieDriver::set_pinout_state(uint8_t bitset)
 uint8_t NixieDriver::truth_table(int8_t digit)
 {
     /*
-        Pinouts on PCB are reversed, in that case we need to reverse truth table for drivers
+        Determine the truth table for driving a particular digit,
+        Pinouts on PCB are reversed, in that case we need to reverse the truth table for drivers
     */
     uint8_t bitset = 0b0000;
 

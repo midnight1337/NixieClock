@@ -6,17 +6,17 @@ Clock::Clock() : m_rtc()
     // initial_rtc_setup();
 }
 
-uint8_t* Clock::time_group()
+uint8_t* Clock::time()
 { 
-    // this variable simply points into two elements, current hour and minute
-    return *m_time_group;
+    /* This variable simply points into array that contains hour and minute, { "HH", "MM" } */
+    return *m_time;
 }
 
-void Clock::read_time()
+void Clock::read_rtc_time()
 {
-    m_time = m_rtc.getDateTime();
-    m_hour = m_time.hour;
-    m_minute = m_time.minute;
+    m_date_time = m_rtc.getDateTime();
+    m_hour = m_date_time.hour;
+    m_minute = m_date_time.minute;
 }
 
 void Clock::set_new_time(uint8_t hour, uint8_t minute)
@@ -24,11 +24,15 @@ void Clock::set_new_time(uint8_t hour, uint8_t minute)
     m_rtc.setDateTime(0, 0, 0, hour, minute, 0);
 }
 
-uint8_t Clock::is_valid_time(int8_t digit, uint8_t digit_group)
+uint8_t Clock::new_time_validation(int8_t digit, uint8_t time_segment)
 {
+    /* 
+    int8_t digit = 
+    uint8_t time_segment = Time format represented as group, HH = 0, MM = 1
+    */
     uint8_t valid_digit;
 
-    switch (digit_group)
+    switch (time_segment)
     {
         case 0:
             if (digit > 23) { valid_digit = 0; }
