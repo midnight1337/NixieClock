@@ -2,15 +2,21 @@
 
 ## Overwiev
 
-Retro style nixie clock, this is a project based on cool looking, gas filled, vintage nixie tubes. <br/>
+Nixie clock is a retro style clock based on cool looking, vintage Nixie Tubes. <br/>
 
-Clock displays time in Hour::Minute format. If RTC somehow loses his time, user is able to change it with functional buttons. 
+This project is inspired by GreatScott, however I've written my own code for driving this device, and did some changes in board by adding microswitches that allows user to change time manually.
 
-Inspired by GreatScott. Best advantage of that project is that it looks cool af. <br/>
+Clock displays time in Hour::Minute segments. Board contains a RTC module that can track time with no power supply.
+
+DS3231 clock library made by https://www.jarzebski.pl/arduino/komponenty/zegar-czasu-rzeczywistego-rtc-ds3231.html,
+however I had to do some modifications for my needs.
+
+![Overwiev](/images/nixie_overwiev.jpg)
 
 ### Technologies and Development
 - Arduino Pro Mini
 - C++
+- Electrical Engineering
 
 ## UML
 ![UML](/images/uml.png)
@@ -22,9 +28,13 @@ Inspired by GreatScott. Best advantage of that project is that it looks cool af.
 ## Project documentation
 
 #### Testing nixie tubes:
-Some of them that I had, were damaged, or cathodes were burned out.
+At the beginning of my project I had to choose working Tubes by building simple driver circuit and running each digit from 0 to 9. As you may know they are very old and well worn. Some of them that I had, were damaged, or cathodes were burned out.
 ![Tube Test](/images/tube_test.jpeg)
 
+
+#### Prototype:
+First power up with everything on board.
+![Prototype](/images/clock-prototype.jpeg)
 
 #### SN74141N Nixie Driver pinout:
 ![SN74141N](/images/SN74141N.png)
@@ -33,7 +43,5 @@ Some of them that I had, were damaged, or cathodes were burned out.
 ![SN74141N](/images/SN74141N_truth_table.png)
 
 #### Nixie tube pinout:
-
-Nixie tubes usually has common anode, and separated cathode, each responsible for every digit on tube.
-
+Usually nixie tube structure has common anode and separted cathodes for each digit.
 ![Tube](/images/nixie_tube_pinout.png)

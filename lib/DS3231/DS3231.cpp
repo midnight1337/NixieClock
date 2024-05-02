@@ -48,6 +48,34 @@ bool DS3231::begin(void)
     return true;
 }
 
+void DS3231::setDateTime(const char* date, uint8_t hour, uint8_t minute, uint8_t second)
+{
+    /*
+        Modified by @midnight1337
+    */
+    uint16_t year;
+    uint8_t month;
+    uint8_t day;
+
+    year = conv2d(date + 9);
+
+    switch (date[0])
+    {
+        case 'J': month = date[1] == 'a' ? 1 : month = date[2] == 'n' ? 6 : 7; break;
+        case 'F': month = 2; break;
+        case 'A': month = date[2] == 'r' ? 4 : 8; break;
+        case 'M': month = date[2] == 'r' ? 3 : 5; break;
+        case 'S': month = 9; break;
+        case 'O': month = 10; break;
+        case 'N': month = 11; break;
+        case 'D': month = 12; break;
+    }
+
+    day = conv2d(date + 4);
+
+    setDateTime(year+2000, month, day, hour, minute, second);
+}
+
 void DS3231::setDateTime(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
 {
     Wire.beginTransmission(DS3231_ADDRESS);

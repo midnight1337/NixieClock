@@ -1,8 +1,8 @@
 /**
  * @title: Nixie Clock
  * @author midnight1337
- * @brief Tubes based clock. A class-organized program, designed for driving nixie tubes by SN74141N drivers.
- * date: 18-12-2023
+ * @brief A class-organised program, designed for running Clock based on Nixie Tubes.
+ * @date: 18-12-2023
 */
 #include "../include/manager.h"
 

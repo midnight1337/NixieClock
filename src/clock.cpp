@@ -3,7 +3,6 @@
 Clock::Clock() : m_rtc() 
 {
     m_rtc.begin();
-    // initial_rtc_setup();
 }
 
 uint8_t* Clock::time()
@@ -19,16 +18,21 @@ void Clock::read_rtc_time()
     m_minute = m_date_time.minute;
 }
 
+void Clock::update_rtc_time()
+{
+    m_rtc.setDateTime(__DATE__, m_hour, m_minute);
+}
+
 void Clock::set_new_time(uint8_t hour, uint8_t minute)
 {
-    m_rtc.setDateTime(0, 0, 0, hour, minute, 0);
+    m_rtc.setDateTime(__DATE__, hour, minute);
 }
 
 uint8_t Clock::new_time_validation(int8_t digit, uint8_t time_segment)
 {
     /* 
-    int8_t digit = 
-    uint8_t time_segment = Time format represented as group, HH = 0, MM = 1
+    int8_t digit = Desired digit to be displayed that needs validation
+    uint8_t time_segment = Time format represented as group (HH = 0, MM = 1)
     */
     uint8_t valid_digit;
 
@@ -55,6 +59,6 @@ uint8_t Clock::new_time_validation(int8_t digit, uint8_t time_segment)
 
 void Clock::initial_rtc_setup()
 {
-    /* Compile this method for the RTC first time ever setup, then compile once again without this method. */
-    m_rtc.setDateTime(0, 0, 0, 0, 0, 0);
+    /* Compile this method for the RTC first time ever setup, it will set clock time as compilation time. Then compile once again without this method. */
+    m_rtc.setDateTime(__DATE__, __TIME__);
 }

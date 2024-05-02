@@ -92,6 +92,7 @@ class DS3231
 
 	bool begin(void);
 
+	void setDateTime(const char* date, uint8_t hour, uint8_t minute, uint8_t second = 0);
 	void setDateTime(uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second);
 	void setDateTime(uint32_t t);
 	void setDateTime(const char* date, const char* time);

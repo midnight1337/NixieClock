@@ -15,6 +15,7 @@ m_clock()
 void Manager::run()
 {
     m_clock.read_rtc_time();
+    m_clock.update_rtc_time();
     display_time();
     menu_mode();
 }
@@ -28,7 +29,12 @@ void Manager::setup()
     */
     pinMode(Pin_MENU, INPUT);
 
-    for (int i = 0; i <= 16; i++) { pinMode(i, OUTPUT); }
+    for (int i = 0; i <= 16; i++)
+    {
+        pinMode(i, OUTPUT);
+    }
+
+    // m_clock.initial_rtc_setup();
 }
 
 void Manager::display_time()
@@ -187,7 +193,6 @@ void Manager::turn_on_tubes(int8_t ommit_time_segment)
     uint8_t digit;
     uint8_t bitset;
 
-    // Loop over time segments drivers
     for (int i = 0; i < 2; i++)
     {
         if (i == ommit_time_segment)
@@ -197,15 +202,12 @@ void Manager::turn_on_tubes(int8_t ommit_time_segment)
         
         time = m_clock.time()[i];
 
-        // Loop over each driver in particular time segment
         for (int j = 0; j < 2; j++)
         {
             current_driver = m_time_segments_drivers[i][j];
             
-            // Determine digit weigth according to current driver
             digit = (j == 0) ? (time / 10) % 10 : time % 10;
 
-            // Set clock digit into driver
             bitset = current_driver->truth_table(digit);
 
             current_driver->set_driver_mode(bitset);
@@ -215,7 +217,6 @@ void Manager::turn_on_tubes(int8_t ommit_time_segment)
 
 void Manager::turn_off_tubes(int8_t ommit_time_segment)
 {
-    //  Digit -1 passed into truth table, returns a 0b1111 bitset which sets none driver output.
     NixieDriver* current_driver;
     int8_t digit = -1;
     uint8_t bitset = m_drivers[0]->truth_table(digit);

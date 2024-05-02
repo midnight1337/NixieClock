@@ -20,6 +20,7 @@ class Clock
         Clock();
         uint8_t* time();
         void read_rtc_time();
+        void update_rtc_time();
         void set_new_time(uint8_t hour, uint8_t minute);
         uint8_t new_time_validation(int8_t digit, uint8_t time_segment);
         void initial_rtc_setup();
