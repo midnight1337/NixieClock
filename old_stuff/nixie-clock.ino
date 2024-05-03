@@ -1,6 +1,8 @@
-/*
-    17.07.2021
-    Code made for NIXIE CLOCK by midnight1337
+/**
+ * @title: Nixie Clock
+ * @author midnight1337
+ * @brief This is my very first code implementation of Nixie Clock, no OOP here so it's messy, but it worked just fine.
+ * @date: 17-07-2021
 */
 #include <DS3231.h>
 #include <Wire.h>

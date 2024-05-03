@@ -28,33 +28,30 @@ void Clock::set_new_time(uint8_t hour, uint8_t minute)
     m_rtc.setDateTime(__DATE__, hour, minute);
 }
 
-uint8_t Clock::new_time_validation(int8_t digit, uint8_t time_segment)
+uint8_t Clock::new_time_validation(int8_t time, uint8_t time_segment)
 {
     /* 
-    int8_t digit = Desired digit to be displayed that needs validation
-    uint8_t time_segment = Time format represented as group (HH = 0, MM = 1)
+    int8_t time = Desired time to be displayed on a particular time segment tubes that needs validation, it depends on a 24h time format.
+    uint8_t time_segment = Time segment represented as a particular group {0: 'HH', 1: 'MM'}
     */
-    uint8_t valid_digit;
+    uint8_t valid_time;
 
     switch (time_segment)
     {
         case 0:
-            if (digit > 23) { valid_digit = 0; }
-            else if (digit < 0) { valid_digit = 23; }
-            else { valid_digit = digit; }
+            if (time > 23) { valid_time = 0; }
+            else if (time < 0) { valid_time = 23; }
+            else { valid_time = time; }
             break;
         
         case 1:
-            if (digit > 59) { valid_digit = 0; }
-            else if (digit < 0) { valid_digit = 59; }
-            else { valid_digit = digit; }
-            break;
-
-        default:
+            if (time > 59) { valid_time = 0; }
+            else if (time < 0) { valid_time = 59; }
+            else { valid_time = time; }
             break;
     }
     
-    return valid_digit;
+    return valid_time;
 }
 
 void Clock::initial_rtc_setup()
